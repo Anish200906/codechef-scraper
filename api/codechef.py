@@ -1,14 +1,15 @@
+from http.server import BaseHTTPRequestHandler
+import json
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import re
-import json
 
+# ---- Scraper function ----
 def fetch_all_user_submissions(handle):
     all_rows = []
     page = 0
 
-    # Keep fetching until no more data
     while True:
         url = f"https://www.codechef.com/recent/user?user_handle={handle}&page={page}"
         r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -18,15 +19,13 @@ def fetch_all_user_submissions(handle):
 
         soup = BeautifulSoup(r.text, "html.parser")
         rows = soup.select("tr")
-
         if not rows:
-            break  # Stop when no more submissions found
+            break
 
         for row in rows:
             cols = row.find_all("td")
             if len(cols) < 5:
                 continue
-
             all_rows.append({
                 "time": cols[0].get_text(" ", strip=True),
                 "problem": cols[1].get_text(" ", strip=True),
@@ -34,14 +33,12 @@ def fetch_all_user_submissions(handle):
                 "language": cols[3].get_text(" ", strip=True),
                 "score": cols[4].get_text(" ", strip=True)
             })
-
         page += 1
 
     df = pd.DataFrame(all_rows)
     if df.empty:
         return []
 
-    # ---- Clean HTML ----
     def clean_html(text):
         if pd.isna(text):
             return ""
@@ -50,7 +47,6 @@ def fetch_all_user_submissions(handle):
     for col in df.columns:
         df[col] = df[col].astype(str).apply(clean_html)
 
-    # ---- Extract & Clean Data ----
     df["time"] = df["time"].str.extract(r'(\d{2}:\d{2}\s[AP]M\s\d{2}/\d{2}/\d{2})')
     df["problem_code"] = df["problem"].str.extract(r'([A-Z0-9_]+)')
     df["score"] = df["score"].str.extract(r'(\d+\.?\d*)').astype(float)
@@ -71,15 +67,24 @@ def fetch_all_user_submissions(handle):
     clean_df = df[["time", "problem_code", "score", "language", "status"]].dropna(subset=["language"])
     return clean_df.to_dict(orient="records")
 
-# ---- Vercel handler ----
-def handler(request, response):
-    handle = request.query.get("handle")
 
-    if not handle:
-        return response.status(400).json({"error": "Missing 'handle' parameter"})
+# ---- Vercel-compatible HTTP handler ----
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        from urllib.parse import parse_qs, urlparse
+        query = parse_qs(urlparse(self.path).query)
+        handle = query.get("handle", [None])[0]
 
-    try:
-        result = fetch_all_user_submissions(handle)
-        return response.status(200).json(result)
-    except Exception as e:
-        return response.status(500).json({"error": str(e)})
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+
+        if not handle:
+            self.wfile.write(json.dumps({"error": "Missing 'handle' parameter"}).encode())
+            return
+
+        try:
+            result = fetch_all_user_submissions(handle)
+            self.wfile.write(json.dumps(result).encode())
+        except Exception as e:
+            self.wfile.write(json.dumps({"error": str(e)}).encode())
