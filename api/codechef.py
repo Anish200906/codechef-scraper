@@ -73,7 +73,7 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         from urllib.parse import parse_qs, urlparse
         query = parse_qs(urlparse(self.path).query)
-        handle = query.get("handle", [None])[0]
+        handle = query.get("handle", [None])[0] or query.get("username", [None])[0]
 
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
