@@ -258,7 +258,7 @@ Accept: application/json</pre>
       );
 
       try {
-        const res = await fetch(`/api/codechef?username=${encodeURIComponent(handle)}`);
+        const res = await fetch(`/api/codechef?handle=${encodeURIComponent(handle)}`);
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({ message: res.statusText }));
           throw new Error(`HTTP Error ${res.status}: ${errorData.message || 'Server error'}`);
