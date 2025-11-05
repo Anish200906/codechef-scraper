@@ -8,8 +8,8 @@
   ],
   "routes": [
     {
-      "src": "/api/codechef",
-      "dest": "api/codechef.py"
+      "src": "/api/codechef$",
+      "dest": "/api/codechef.py"
     }
   ]
 }
