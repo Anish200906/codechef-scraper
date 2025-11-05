@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeChef Submission API Docs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Base Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    nav {
+      width: 260px;
+      background-color: #1e293b;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 20px;
+    }
+
+    nav h1 {
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    nav ul {
+      list-style: none;
+    }
+
+    nav li {
+      margin: 12px 0;
+    }
+
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #38bdf8;
+    }
+
+    /* Main Documentation Area */
+    main {
+      flex: 1;
+      padding: 40px 60px;
+      overflow-y: auto;
+    }
+
+    main h2 {
+      font-size: 1.8em;
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-top: 30px;
+    }
+
+    main p {
+      margin: 15px 0;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    code {
+      background-color: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #be123c;
+      font-family: "Consolas", monospace;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: "Consolas", monospace;
+      font-size: 0.95em;
+      margin-top: 10px;
+    }
+
+    .endpoint-box {
+      background: #e0f2fe;
+      border-left: 5px solid #0284c7;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .interaction-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    input:focus {
+      border-color: #0284c7;
+      outline: none;
+      box-shadow: 0 0 5px rgba(2, 132, 199, 0.2);
+    }
+
+    button {
+      background-color: #0284c7;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0ea5e9;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      color: #64748b;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+
+      nav {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      nav ul {
+        display: flex;
+        gap: 15px;
+      }
+
+      main {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>CodeChef API Docs</h1>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#endpoint">Endpoint</a></li>
+      <li><a href="#example">Example Request</a></li>
+      <li><a href="#demo">Live Demo</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>
+        The <strong>CodeChef Submission API</strong> allows developers to fetch the most recent submission data for any CodeChef user in a structured JSON format.
+      </p>
+      <p>
+        This service is ideal for building dashboards, coding analytics tools, or integrating CodeChef stats into your web applications.
+      </p>
+    </section>
+
+    <section id="endpoint">
+      <h2>API Endpoint</h2>
+      <div class="endpoint-box">
+        <p><strong>GET</strong> <code>/api/codechef?username={handle}</code></p>
+      </div>
+      <p>Replace <code>{handle}</code> with the target CodeChef username.</p>
+      <p><strong>Response Format:</strong> JSON</p>
+
+      <pre>{
+  "username": "maspy",
+  "recent_submissions": [
+    {
+      "problem": "STARTERS150",
+      "language": "C++",
+      "status": "AC",
+      "timestamp": "2025-11-01T12:30:00Z"
+    }
+  ]
+}</pre>
+    </section>
+
+    <section id="example">
+      <h2>Example Request</h2>
+      <pre>GET /api/codechef?username=maspy HTTP/1.1
+Host: yourdomain.com
+Accept: application/json</pre>
+    </section>
+
+    <section id="demo">
+      <h2>Live API Tester</h2>
+      <p>Enter a CodeChef username below to test the live API endpoint:</p>
+
+      <div class="interaction-area">
+        <input id="handle" placeholder="Enter CodeChef username (e.g., maspy)" />
+        <button onclick="fetchData()">Test API</button>
+      </div>
+
+      <pre id="output">{}</pre>
+    </section>
+
+    <footer>
+      © 2025 CodeChef Submission API Service. Built for developers 💻
+    </footer>
+  </main>
+
+  <script>
+    async function fetchData() {
+      const handle = document.getElementById("handle").value.trim();
+      const output = document.getElementById("output");
+
+      if (!handle) {
+        output.textContent = JSON.stringify(
+          { error: "Username cannot be empty. Please enter a valid CodeChef handle." },
+          null,
+          2
+        );
+        return;
+      }
+
+      output.textContent = JSON.stringify(
+        { status: "Fetching data for " + handle + "..." },
+        null,
+        2
+      );
+
+      try {
+        const res = await fetch(`/api/codechef?username=${encodeURIComponent(handle)}`);
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({ message: res.statusText }));
+          throw new Error(`HTTP Error ${res.status}: ${errorData.message || 'Server error'}`);
+        }
+
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = JSON.stringify(
+          { status: "Error", message: err.message || "An unknown error occurred." },
+          null,
+          2
+        );
+      }
+    }
+  </script>
+</body>
+</html>

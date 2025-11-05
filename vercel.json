@@ -1,15 +1,10 @@
 {
-  "version": 2,
   "builds": [
-    {
-      "src": "api/codechef.py",
-      "use": "@vercel/python"
-    }
+    { "src": "api/codechef.py", "use": "@vercel/python" },
+    { "src": "index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/api/codechef$",
-      "dest": "/api/codechef.py"
-    }
+    { "src": "/api/(.*)", "dest": "/api/codechef.py" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
